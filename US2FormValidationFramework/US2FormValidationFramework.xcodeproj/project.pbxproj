@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		24FF171C15F8760000B0A512 /* US2FormValidationFrameworkStaticLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 24FF171B15F8760000B0A512 /* US2FormValidationFrameworkStaticLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4C0DE68814FE4173005D93CB /* US2ConditionShorthandURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C0DE68614FE4173005D93CB /* US2ConditionShorthandURL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4C0DE68914FE4173005D93CB /* US2ConditionShorthandURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C0DE68714FE4173005D93CB /* US2ConditionShorthandURL.m */; };
 		4C0DE68D14FE4B86005D93CB /* US2ValidatorShorthandURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C0DE68B14FE4B86005D93CB /* US2ValidatorShorthandURL.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -99,6 +100,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		24FF171B15F8760000B0A512 /* US2FormValidationFrameworkStaticLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = US2FormValidationFrameworkStaticLibrary.h; sourceTree = "<group>"; };
 		4C0DE68614FE4173005D93CB /* US2ConditionShorthandURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = US2ConditionShorthandURL.h; sourceTree = "<group>"; };
 		4C0DE68714FE4173005D93CB /* US2ConditionShorthandURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = US2ConditionShorthandURL.m; sourceTree = "<group>"; };
 		4C0DE68B14FE4B86005D93CB /* US2ValidatorShorthandURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = US2ValidatorShorthandURL.h; sourceTree = "<group>"; };
@@ -320,6 +322,7 @@
 				4C59DD491487BD7B0047C698 /* conditions */,
 				4C59DD561487BD7B0047C698 /* validators */,
 				5BEA7205147FA7B800D03089 /* Localization.bundle */,
+				24FF171B15F8760000B0A512 /* US2FormValidationFrameworkStaticLibrary.h */,
 			);
 			path = source;
 			sourceTree = "<group>";
@@ -360,6 +363,7 @@
 				FAA9CDE71558802E00FFFDA4 /* US2ConditionPasswordStrength.h in Headers */,
 				4CB213BD15B94C7900A0705E /* US2ConditionPostcodeUK.h in Headers */,
 				4C0F37D815BD5F86007ADAC5 /* US2ValidatorPostcodeUK.h in Headers */,
+				24FF171C15F8760000B0A512 /* US2FormValidationFrameworkStaticLibrary.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

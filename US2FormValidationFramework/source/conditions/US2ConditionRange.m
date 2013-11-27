@@ -56,7 +56,7 @@
         string = [NSString string];
     
     NSError *error             = NULL;
-    NSString *regexString      = [NSString stringWithFormat:@"^.{%d,%d}$", _range.location, _range.length];
+    NSString *regexString      = [NSString stringWithFormat:@"^.{%lu,%lu}$", (unsigned long)_range.location, (unsigned long)_range.length];
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexString options:0 error:&error];
     NSUInteger numberOfMatches = [regex numberOfMatchesInString:string options:0 range:NSMakeRange(0, string.length)];
     

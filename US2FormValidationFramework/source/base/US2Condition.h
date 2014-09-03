@@ -24,6 +24,7 @@
 //  
 
 #import <Foundation/Foundation.h>
+#import "US2Localization.h"
 
 
 #pragma mark - Condition protocol
@@ -39,7 +40,7 @@
  Check the custom condition.
  
  @param string String to check
- @return Return whether condition check failed or not
+ @return Return whether condition check passed or not
 */
 - (BOOL)check:(NSString *)string;
 
@@ -70,13 +71,51 @@
 @interface US2Condition : NSObject <US2ConditionProtocol>
 {
 @private
+    NSString *_localizedViolationString;
     BOOL _shouldAllowViolation;
 }
+
+@property (copy, nonatomic) NSString *localizedViolationString;
 
 /**
  If set to *NO* the user is not able to enter characters which would break the condition.
 */
 @property (nonatomic, assign) BOOL shouldAllowViolation;
 
+/**
+ A regular expression string which the validated string is matched against
+ Defaults to nil
+ */
+@property (nonatomic, copy) NSString *regexString;
+
+/**
+ Static shorthand for creating a validator.
+ */
++ (US2Condition *) condition;
+
+/**
+ Initialize condition with a custom localized violation string.
+ */
+- (id)initWithLocalizedViolationString:(NSString *)localizedViolationString;
+
+/**
+ Set the localized violation string and return self.
+ */
+- (id)withLocalizedViolationString:(NSString *)localizedViolationString;
+
+/**
+ Initialize condition with a custom localized violation string and regex string.
+ */
+- (id)initWithLocalizedViolationString:(NSString *)localizedViolationString andRegexString:(NSString *)regexString;
+
+/**
+ Initialize condition with a custom regex string.
+ */
+- (id)initWithRegexString:(NSString *)regexString;
+
+/**
+ Set the regex string and return self.
+ */
+- (id)withRegexString:(NSString *)regexString;
 
 @end

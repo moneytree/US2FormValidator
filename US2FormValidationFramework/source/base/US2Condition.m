@@ -28,8 +28,59 @@
 
 @implementation US2Condition
 
-
 @synthesize shouldAllowViolation = _shouldAllowViolation;
+@synthesize localizedViolationString = _localizedViolationString;
+@synthesize regexString = _regex;
+
+#pragma mark - Init
+
++ (US2Condition *)condition
+{
+    return [[[[self class] alloc] init] autorelease];
+}
+
+- (id)initWithLocalizedViolationString:(NSString *)localizedViolationString
+{
+    if (self = [super init])
+    {
+        self.localizedViolationString = localizedViolationString;
+    }
+    
+    return self;
+}
+
+- (id)initWithLocalizedViolationString:(NSString *)localizedViolationString andRegexString:(NSString *)regexString
+{
+    if (self = [super init])
+    {
+        self.localizedViolationString = localizedViolationString;
+        self.regexString = regexString;
+    }
+    
+    return self;
+}
+
+- (id)initWithRegexString:(NSString *)regexString
+{
+    if (self = [super init])
+    {
+        self.regexString = regexString;
+    }
+    
+    return self;
+}
+
+- (id)withRegexString:(NSString *)regexString
+{
+    self.regexString = regexString;
+    return self;
+}
+
+- (id)withLocalizedViolationString:(NSString *)localizedViolationString
+{
+    self.localizedViolationString = localizedViolationString;
+    return self;
+}
 
 
 #pragma mark - Check
@@ -41,11 +92,36 @@
 */
 - (BOOL)check:(NSString *)string
 {
-    return YES;
+    BOOL success = YES;
+    
+    if(!string)
+    {
+        success = NO;
+    }
+    else if(self.regexString)
+    {
+        NSError *error = NULL;
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:self.regexString options:NSRegularExpressionCaseInsensitive error:&error];
+        if(!error)
+        {
+            NSRange matchRange = [regex rangeOfFirstMatchInString:string options:0 range:NSMakeRange(0, string.length)];
+            success = (matchRange.location == 0) && (matchRange.length == string.length);
+        }
+    }
+    
+    return success;
 }
 
 
 #pragma mark - Localization
+
+/**
+ Create a localized violation string.
+ */
+- (NSString *)createLocalizedViolationString
+{
+    return nil;
+}
 
 /**
  Returns a localized violation string.
@@ -54,7 +130,12 @@
 */
 - (NSString *)localizedViolationString
 {
-    return nil;
+    if (!_localizedViolationString)
+    {
+        return [self createLocalizedViolationString];
+    }
+    
+    return _localizedViolationString;
 }
 
 
@@ -71,7 +152,7 @@
     [description appendString:@"<"];
     [description appendString:[super description]];
     [description appendString:[NSString stringWithFormat:@"\n <localizedViolationString: %@>", [self localizedViolationString]]];
-    [description appendString:[NSString stringWithFormat:@"\n <shouldAllowViolation: %@>", _shouldAllowViolation == 0 ? @"YES" : @"NO"]];
+    [description appendString:[NSString stringWithFormat:@"\n <shouldAllowViolation: %@>", _shouldAllowViolation == 0 ? @"NO" : @"YES"]];
     [description appendString:@">"];
     
     return description;

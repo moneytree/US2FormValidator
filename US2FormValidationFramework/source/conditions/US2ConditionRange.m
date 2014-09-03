@@ -48,37 +48,33 @@
 
 - (BOOL)check:(NSString *)string
 {
+    BOOL success = NO;
+    
     if (0 == _range.location
         && 0 == _range.length)
-        return YES;
+        success = YES;
     
     if (nil == string)
         string = [NSString string];
     
-    NSError *error             = NULL;
-    NSString *regexString      = [NSString stringWithFormat:@"^.{%lu,%lu}$", (unsigned long)_range.location, (unsigned long)_range.length];
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexString options:0 error:&error];
-    NSUInteger numberOfMatches = [regex numberOfMatchesInString:string options:0 range:NSMakeRange(0, string.length)];
+//    NSError *error             = NULL;
+//    NSString *regexString      = [NSString stringWithFormat:@"^.{%lu,%lu}$", (unsigned long)_range.location, (unsigned long)_range.length];
+//    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexString options:0 error:&error];
+//    NSUInteger numberOfMatches = [regex numberOfMatchesInString:string options:0 range:NSMakeRange(0, string.length)];
+    if(string.length >= _range.location && string.length <= _range.length)
+    {
+        success = YES;
+    }
     
-    return numberOfMatches == 1;
+    return success;
 }
 
 
 #pragma mark - Localization
 
-- (NSString *)localizedViolationString
-{
-    NSString *key = @"US2KeyConditionViolationRange";
-    
-    NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Localization.bundle"];
-    NSBundle *bundle = [NSBundle bundleWithPath:path];
-    
-    if (bundle)
-    {
-        return [NSString stringWithFormat:[bundle localizedStringForKey:key value:key table:nil], _range.location, _range.length];
-    }
-    
-    return nil;
+- (NSString *)createLocalizedViolationString
+{    
+    return  [NSString stringWithFormat:US2LocalizedString(@"US2KeyConditionViolationRange", nil),_range.location,_range.length];
 }
 
 

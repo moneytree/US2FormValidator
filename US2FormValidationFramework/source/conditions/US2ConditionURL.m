@@ -36,12 +36,9 @@
         return NO;
     }
     
-    NSDataDetector *detector = [NSDataDetector dataDetectorWithTypes:NSTextCheckingTypeLink error:nil];
-    NSTextCheckingResult *firstMatch = [detector firstMatchInString:string options:0 range:NSMakeRange(0, [string length])];
+    self.regexString = @"^((https?)://)[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
     
-    return [firstMatch.URL isKindOfClass:[NSURL class]]
-           && ![firstMatch.URL.scheme isEqualToString:@"mailto"]
-           && ![firstMatch.URL.scheme isEqualToString:@"ftp"];
+    return [super check:string];
 }
 
 
@@ -55,19 +52,9 @@
 
 #pragma mark - Localization
 
-- (NSString *)localizedViolationString
+- (NSString *) createLocalizedViolationString
 {
-    NSString *key = @"US2KeyConditionViolationURL";
-    
-    NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Localization.bundle"];
-    NSBundle *bundle = [NSBundle bundleWithPath:path];
-    
-    if (bundle)
-    {
-        return [bundle localizedStringForKey:key value:key table:nil];
-    }
-    
-    return nil;
+    return US2LocalizedString(@"US2KeyConditionViolationURL", nil);
 }
 
 @end

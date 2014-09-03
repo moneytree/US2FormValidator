@@ -36,11 +36,9 @@
         return NO;
     }
     
-    NSError *error             = NULL;
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"^((https?)://)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$" options:NSRegularExpressionCaseInsensitive error:&error];
-    NSUInteger numberOfMatches = [regex numberOfMatchesInString:string options:0 range:NSMakeRange(0, string.length)];
+    self.regexString = @"^((https?)://)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
     
-    return numberOfMatches == 1;
+    return [super check:string];
 }
 
 
@@ -54,11 +52,11 @@
 
 #pragma mark - Localization
 
-- (NSString *)localizedViolationString
+- (NSString *) createLocalizedViolationString
 {
     NSString *key = @"US2KeyConditionViolationShorthandURL";
     
-    NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Localization.bundle"];
+    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource: @"Localization" ofType:@"bundle"];
     NSBundle *bundle = [NSBundle bundleWithPath:path];
     
     if (bundle)

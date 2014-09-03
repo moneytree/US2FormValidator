@@ -34,7 +34,9 @@
 #import "US2ConditionURL.h"
 #import "US2ConditionShorthandURL.h"
 #import "US2ConditionPostcodeUK.h"
-
+#import "US2ConditionOr.h"
+#import "US2ConditionAnd.h"
+#import "US2ConditionNot.h"
 
 @implementation ConditionUnitTests
 
@@ -84,17 +86,25 @@
 - (void)testUS2ConditionAlphabetic
 {
     NSString *successTestString1 = @"abcdefgh";
+    NSString *successTestString2 = @"abcd efg h";
     NSString *failureTestString1 = @"12345678";
     NSString *failureTestString2 = @"a?";
     NSString *failureTestString3 = nil;
+    NSString *failureTestString4 = @"";
     
     US2ConditionAlphabetic *condition = [[US2ConditionAlphabetic alloc] init];
     
     STAssertTrue([condition check:successTestString1], @"The US2ConditionAlphabetic should respond with TRUE and not FALSE", nil);
     
+    condition.allowWhitespace = YES;
+    STAssertTrue([condition check:successTestString1], @"The US2ConditionAlphabetic should respond with TRUE and not FALSE", nil);
+    STAssertTrue([condition check:successTestString2], @"The US2ConditionAlphabetic should respond with TRUE and not FALSE", nil);
+    condition.allowWhitespace = NO;
+    
     STAssertFalse([condition check:failureTestString1], @"The US2ConditionAlphabetic should respond with FALSE and not TRUE", nil);
     STAssertFalse([condition check:failureTestString2], @"The US2ConditionAlphabetic should respond with FALSE and not TRUE", nil);
     STAssertFalse([condition check:failureTestString3], @"The US2ConditionAlphabetic should respond with FALSE and not TRUE", nil);
+    STAssertFalse([condition check:failureTestString4], @"The US2ConditionAlphabetic should respond with FALSE and not TRUE", nil);
     
     [condition release];
 }
@@ -116,13 +126,30 @@
 }
 
 /**
+ Test Condition with custom regex check
+ */
+- (void)testUS2ConditionRegexString
+{
+    NSString *successTestString1 = @"hello world";
+    NSString *failureTestString1 = @"a?1";
+    NSString *failureTestString2 = nil;
+    
+    US2Condition *condition = [[US2Condition alloc] initWithRegexString:@"hello world"];
+    STAssertTrue([condition check:successTestString1], @"The US2Condition should respond with TRUE and not FALSE", nil);
+    
+    STAssertFalse([condition check:failureTestString1], @"The US2Condition should respond with FALSE and not TRUE", nil);
+    STAssertFalse([condition check:failureTestString2], @"The US2Condition should respond with FALSE and not TRUE", nil);
+}
+
+/**
  Test US2ConditionEmail check
  */
 - (void)testUS2ConditionEmail
 {
     NSString *successTestString1 = @"example@example.ex";
     NSString *successTestString2 = @"e_x.a+m-p_l.e@example.ex.am";
-    NSString *successTestString3 = @"example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_@example.ex";
+    NSString *successTestString3 = @"e_x.a+m-p_l.e@ex.example-example.ex.am";
+    NSString *successTestString4 = @"example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_example_@example.ex";
     NSString *failureTestString1 = @"example";
     NSString *failureTestString2 = @"example@";
     NSString *failureTestString3 = @"example@example";
@@ -137,6 +164,7 @@
     STAssertTrue([condition check:successTestString1], @"The US2ConditionEmail should respond with TRUE and not FALSE", nil);
     STAssertTrue([condition check:successTestString2], @"The US2ConditionEmail should respond with TRUE and not FALSE", nil);
     STAssertTrue([condition check:successTestString3], @"The US2ConditionEmail should respond with TRUE and not FALSE", nil);
+    STAssertTrue([condition check:successTestString4], @"The US2ConditionEmail should respond with TRUE and not FALSE", nil);
     
     STAssertFalse([condition check:failureTestString1], @"The US2ConditionEmail should respond with FALSE and not TRUE", nil);
     STAssertFalse([condition check:failureTestString2], @"The US2ConditionEmail should respond with FALSE and not TRUE", nil);
@@ -155,33 +183,35 @@
 - (void)testUS2ConditionURL
 {
     NSString *successTestString1 = @"http://www.example.com";
-    NSString *successTestString2 = @"http://localhost:8080";
-    NSString *successTestString3 = @"http://lol";
-    NSString *successTestString4 = @"https://www.example.com";
-    NSString *successTestString5 = @"http://www.example.com/path";
-    NSString *successTestString6 = @"www.example.com";
-    NSString *successTestString7 = @"http://www.example.com/?id=12345&param=value";
+    NSString *successTestString2 = @"https://www.example.com";
+    NSString *successTestString3 = @"http://www.example.com/path";
+    NSString *successTestString4 = @"http://www.example.com/?id=12345&param=value";
     
     NSString *failureTestString1 = @"";
     NSString *failureTestString2 = nil;
-    NSString *failureTestString3 = @"http://";
-    NSString *failureTestString4 = @"ftp://www.example.com";
-    NSString *failureTestString5 = @"mailto://www.example.com";
+    NSString *failureTestString3 = @"example";
+    NSString *failureTestString4 = @"example.com";
+    NSString *failureTestString5 = @"www.example.com";
+    NSString *failureTestString6 = @"http://example";
+    NSString *failureTestString7 = @"http://";
+    NSString *failureTestString8 = @"ftp://www.example.com";
+    NSString *failureTestString9 = @"mailto://www.example.com";
     
     US2ConditionURL* condition = [[US2ConditionURL alloc] init];
     STAssertTrue([condition check:successTestString1], @"The US2ConditionURL should respond with TRUE and not FALSE", nil);
     STAssertTrue([condition check:successTestString2], @"The US2ConditionURL should respond with TRUE and not FALSE", nil);
     STAssertTrue([condition check:successTestString3], @"The US2ConditionURL should respond with TRUE and not FALSE", nil);
     STAssertTrue([condition check:successTestString4], @"The US2ConditionURL should respond with TRUE and not FALSE", nil);
-    STAssertTrue([condition check:successTestString5], @"The US2ConditionURL should respond with TRUE and not FALSE", nil);
-    STAssertTrue([condition check:successTestString6], @"The US2ConditionURL should respond with TRUE and not FALSE", nil);
-    STAssertTrue([condition check:successTestString7], @"The US2ConditionURL should respond with TRUE and not FALSE", nil);
     
     STAssertFalse([condition check:failureTestString1], @"The US2ConditionURL should respond with FALSE and not TRUE", nil);
     STAssertFalse([condition check:failureTestString2], @"The US2ConditionURL should respond with FALSE and not TRUE", nil);
     STAssertFalse([condition check:failureTestString3], @"The US2ConditionURL should respond with FALSE and not TRUE", nil);
     STAssertFalse([condition check:failureTestString4], @"The US2ConditionURL should respond with FALSE and not TRUE", nil);
     STAssertFalse([condition check:failureTestString5], @"The US2ConditionURL should respond with FALSE and not TRUE", nil);
+    STAssertFalse([condition check:failureTestString6], @"The US2ConditionURL should respond with FALSE and not TRUE", nil);
+    STAssertFalse([condition check:failureTestString7], @"The US2ConditionURL should respond with FALSE and not TRUE", nil);
+    STAssertFalse([condition check:failureTestString8], @"The US2ConditionURL should respond with FALSE and not TRUE", nil);
+    STAssertFalse([condition check:failureTestString9], @"The US2ConditionURL should respond with FALSE and not TRUE", nil);
 }
 
 /**
@@ -197,12 +227,14 @@
     NSString *successTestString6 = @"example.com";
     NSString *successTestString7 = @"www.example.com";
     NSString *successTestString8 = @"www.example.com/path";
-    NSString *successTestString9 = @"http://lol";
     
     NSString *failureTestString1 = @"";
     NSString *failureTestString2 = nil;
-    NSString *failureTestString3 = @"http://";
-    NSString *failureTestString4 = @"www.";
+    NSString *failureTestString3 = @"example";
+    NSString *failureTestString4 = @"http://example";
+    NSString *failureTestString5 = @"http://";
+    NSString *failureTestString6 = @"ftp://www.example.com";
+    NSString *failureTestString7 = @"mailto://www.example.com";
     
     US2ConditionShorthandURL* condition = [[US2ConditionShorthandURL alloc] init];
     STAssertTrue([condition check:successTestString1], @"The US2ConditionShorthandURL should respond with TRUE and not FALSE", nil);
@@ -213,12 +245,14 @@
     STAssertTrue([condition check:successTestString6], @"The US2ConditionShorthandURL should respond with TRUE and not FALSE", nil);
     STAssertTrue([condition check:successTestString7], @"The US2ConditionShorthandURL should respond with TRUE and not FALSE", nil);
     STAssertTrue([condition check:successTestString8], @"The US2ConditionShorthandURL should respond with TRUE and not FALSE", nil);
-    STAssertTrue([condition check:successTestString9], @"The US2ConditionShorthandURL should respond with TRUE and not FALSE", nil);
     
     STAssertFalse([condition check:failureTestString1], @"The US2ConditionShorthandURL should respond with FALSE and not TRUE", nil);
     STAssertFalse([condition check:failureTestString2], @"The US2ConditionShorthandURL should respond with FALSE and not TRUE", nil);
     STAssertFalse([condition check:failureTestString3], @"The US2ConditionShorthandURL should respond with FALSE and not TRUE", nil);
     STAssertFalse([condition check:failureTestString4], @"The US2ConditionShorthandURL should respond with FALSE and not TRUE", nil);
+    STAssertFalse([condition check:failureTestString5], @"The US2ConditionShorthandURL should respond with FALSE and not TRUE", nil);
+    STAssertFalse([condition check:failureTestString6], @"The US2ConditionShorthandURL should respond with FALSE and not TRUE", nil);
+    STAssertFalse([condition check:failureTestString7], @"The US2ConditionShorthandURL should respond with FALSE and not TRUE", nil);
 }
 
 /**
@@ -235,6 +269,7 @@
     
     NSString *failureTestString1 = @"a";
     NSString *failureTestString2 = nil;
+    NSString *failureTestString3 = @"1234abc";
     
     US2ConditionNumeric *condition = [[US2ConditionNumeric alloc] init];
     STAssertTrue([condition check:successTestString1], @"The US2ConditionNumeric should respond with TRUE and not FALSE", nil);
@@ -242,6 +277,7 @@
     
     STAssertFalse([condition check:failureTestString1], @"The US2ConditionNumeric should respond with FALSE and not TRUE", nil);
     STAssertFalse([condition check:failureTestString2], @"The US2ConditionNumeric should respond with FALSE and not TRUE", nil);
+    STAssertFalse([condition check:failureTestString3], @"The US2ConditionNumeric should respond with FALSE and not TRUE", nil);
 }
 
 /**
@@ -251,11 +287,6 @@
 {
     NSString *successTestString1 = @"1A2B3D4C5D";
     NSString *successTestString2 = @"1A2";
-//    NSMutableString *successTestString3 = [NSMutableString string];
-//    for (NSUInteger i = 0; i < 1000000; i++)
-//    {
-//        [successTestString3 appendString:successTestString1];
-//    }
     
     NSString *failureTestString1 = @"1A2B3D4C5D6E";
     NSString *failureTestString2 = @"1A";
@@ -330,5 +361,110 @@
     STAssertFalse([condition check:failureTestString5], @"The US2ConditionPostcodeUK should respond with FALSE and not TRUE", nil);
 }
 
+/**
+ Test US2Condition createLocalizedViolationString and localizedViolationString customization.
+ */
+- (void)testUS2ConditionCustomLocalizedViolationString
+{
+    NSString *customLocalizedViolationString = @"Enter a valid UK postal code.";
+    US2ConditionPostcodeUK *condition = [[US2ConditionPostcodeUK alloc] init];
+    condition.localizedViolationString = customLocalizedViolationString;
+    
+    STAssertEqualObjects([condition localizedViolationString], customLocalizedViolationString, @"Condition must return custom/overriden localized violation string.");
+}
+
+/**
+ Test US2ConditionOr
+ */
+- (void)testUS2ConditionOr
+{
+    NSString *successTestString1 = @"";    
+    NSString *failureTestString1 = @"1A234";
+    
+    US2ConditionRange *conditionRange = [[US2ConditionRange alloc] init];
+    conditionRange.range = NSMakeRange(0, 4);
+    
+    US2ConditionAlphanumeric *conditionAlphanumeric = [[US2ConditionAlphanumeric alloc] init];
+    
+    US2ConditionOr *conditionOr = [[US2ConditionOr alloc] initWithConditionOne: conditionRange two: conditionAlphanumeric];
+    NSString *expectedLocalizedViolationString = @"Min 0 Max 4 or must only contain alphanumeric";
+    conditionOr.localizedViolationString = expectedLocalizedViolationString;
+    
+    // Test initial conditions
+    STAssertTrue([conditionRange check:successTestString1], @"The US2ConditionRange should respond with TRUE and not FALSE", nil);    
+    STAssertFalse([conditionRange check:failureTestString1], @"The US2ConditionRange should respond with FALSE and not TRUE", nil);
+    STAssertEqualObjects([conditionRange localizedViolationString], @"US2KeyConditionViolationRange", @"Localized violation desription must match.");
+    
+    // Test or condition
+    STAssertTrue([conditionOr check: failureTestString1], @"The US2ConditionOr should be true for alpha or range.", nil);
+    STAssertEqualObjects([conditionOr localizedViolationString], expectedLocalizedViolationString, @"Localized violation desription must match.");
+}
+
+/**
+ Test US2ConditionAnd
+ */
+- (void)testUS2ConditionAnd
+{
+    NSString *successTestString1 = @"";
+    NSString *successTestString2 = @"1A23";
+    NSString *failureTestString1 = @"1A234";
+    
+    US2ConditionRange *conditionRange = [[US2ConditionRange alloc] init];
+    conditionRange.range = NSMakeRange(0, 4);
+    
+    US2ConditionAlphanumeric *conditionAlphanumeric = [[US2ConditionAlphanumeric alloc] init];
+    
+    US2ConditionAnd *conditionAnd = [[US2ConditionAnd alloc] initWithConditionOne: conditionRange two: conditionAlphanumeric];
+    NSString *expectedLocalizedViolationString = @"US2KeyConditionViolationRange";
+    conditionAnd.localizedViolationString = expectedLocalizedViolationString;
+    
+    // Test initial conditions
+    STAssertTrue([conditionRange check:successTestString1], @"The US2ConditionRange should respond with TRUE and not FALSE", nil);
+    STAssertFalse([conditionRange check:failureTestString1], @"The US2ConditionRange should respond with FALSE and not TRUE", nil);
+    STAssertEqualObjects([conditionRange localizedViolationString], @"US2KeyConditionViolationRange", @"Localized violation desription must match.");
+    
+    // Test or condition
+    STAssertTrue([conditionAnd check: successTestString1], @"The US2ConditionAnd should be true for alpha or range.", nil);
+    STAssertTrue([conditionAnd check: successTestString2], @"The US2ConditionAnd should be true for alpha or range.", nil);
+    STAssertFalse([conditionAnd check: failureTestString1], @"The US2ConditionAnd should be true for alpha or range.", nil);
+    STAssertEqualObjects([conditionAnd localizedViolationString], expectedLocalizedViolationString, @"Localized violation desription must match.");
+}
+
+/**
+ Test US2ConditionNot
+ */
+- (void)testUS2ConditionNot
+{
+    NSString *successTestString1 = @"";
+    NSString *failureTestString1 = @"1A234";
+    
+    US2ConditionRange *conditionRange = [[US2ConditionRange alloc] init];
+    conditionRange.range = NSMakeRange(0, 4);
+    
+    US2ConditionNot *conditionNot = [[US2ConditionNot alloc] initWithCondition: conditionRange];
+    NSString *expectedLocalizedViolationString = @"Must not be between 0 through 4.";
+    conditionNot.localizedViolationString = expectedLocalizedViolationString;
+    
+    // Test initial conditions
+    STAssertTrue([conditionRange check:successTestString1], @"The US2ConditionRange should respond with TRUE and not FALSE", nil);
+    STAssertFalse([conditionRange check:failureTestString1], @"The US2ConditionRange should respond with FALSE and not TRUE", nil);
+    STAssertEqualObjects([conditionRange localizedViolationString], @"US2KeyConditionViolationRange", @"Localized violation desription must match.");
+    
+    // Test not condition
+    STAssertFalse([conditionNot check:successTestString1], @"The US2ConditionRange should respond with TRUE and not FALSE", nil);
+    STAssertTrue([conditionNot check:failureTestString1], @"The US2ConditionRange should respond with FALSE and not TRUE", nil);
+    STAssertEqualObjects([conditionNot localizedViolationString], expectedLocalizedViolationString, @"Localized violation desription must match.");
+    
+}
+
+/**
+ Test US2Condition condition
+ */
+- (void)testUS2ConditionStatic
+{
+    US2Condition *conditionRange = [US2ConditionRange condition];
+    STAssertNotNil(conditionRange, @"Condition must not be nil.");
+    STAssertTrue([conditionRange isKindOfClass: [US2ConditionRange class]], @"Must be correct class.", nil);
+}
 
 @end

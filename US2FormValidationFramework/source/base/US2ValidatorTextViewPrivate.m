@@ -103,8 +103,8 @@
         [_validatorTextView validatorTextViewDelegate:self violatedConditions:conditions];
     
     // If condition is NULL no condition failed
-    if (NO == _validatorTextView.shouldAllowViolations
-        || NO == [conditions conditionAtIndex:0].shouldAllowViolation)
+    if (!_validatorTextView.validateOnFocusLossOnly && (NO == _validatorTextView.shouldAllowViolations
+        || NO == [conditions conditionAtIndex:0].shouldAllowViolation))
     {
         return [conditions conditionAtIndex:0] == nil;
     }
@@ -152,7 +152,7 @@
     }
     
     // Inform delegate about changes
-    if ([_delegate respondsToSelector:@selector(validatorUIChange:)])
+    if ([_delegate respondsToSelector:@selector(validatorUIDidChange:)])
         [_delegate validatorUIDidChange:_validatorTextView];
 }
 

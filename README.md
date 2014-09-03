@@ -3,6 +3,8 @@
 ustwo™ iOS Form Validator
 =========================
 
+[![Build Status](https://travis-ci.org/ustwo/US2FormValidator.png)](https://travis-ci.org/ustwo/US2FormValidator)
+
 This framework allows you to validate inputs of text fields and text views in a convenient way.
 
 Features
@@ -28,6 +30,10 @@ Clone the project from the link above.
 
 ![Target dependencies screen](https://github.com/ustwo/US2FormValidator/raw/master/Documentation/Images/Target Dependencies.png)
 
+### Add US2Localizable.strings to your projects Copy Bundle Resources
+
+![Target dependencies screen](https://github.com/ustwo/US2FormValidator/raw/master/Documentation/Images/Bundle Resources.png)
+
 Installation using CocoaPods
 ----------------------------
 
@@ -36,7 +42,7 @@ https://github.com/CocoaPods/CocoaPods
 
 Add the following line to your pod file:
 
-    dependency 'US2FormValidator', '~> 1.0.0'
+    pod 'US2FormValidator', '~> 1.0.8'
 
 How-To
 ------
@@ -93,11 +99,9 @@ Create the implementation.
 		if (nil == string)
 			string = [NSString string];
 		
-		NSError *error             = NULL;
-		NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"[a-zA-Z .-]" options:0 error:&error];
-		NSUInteger numberOfMatches = [regex numberOfMatchesInString:string options:0 range:NSMakeRange(0, string.length)];
+		self.regexString = @"[a-zA-Z .-]";
 		
-		return numberOfMatches == string.length;
+		return [super check:string];
 	}
 	
 	

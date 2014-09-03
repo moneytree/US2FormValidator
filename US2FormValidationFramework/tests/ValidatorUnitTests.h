@@ -24,8 +24,18 @@
 //  
 
 #import <SenTestingKit/SenTestingKit.h>
+#import "US2Validatable.h"
 
 @class US2Validator;
+@protocol US2Validatable;
+@protocol US2ValidatorProtocol;
+
+@interface US2ValidatableMock : NSObject <US2Validatable>
+
+@property (retain, nonatomic) NSString *text;
+@property (assign, nonatomic) id<US2ValidatorProtocol> validator;
+
+@end
 
 @interface ValidatorUnitTests : SenTestCase
 {

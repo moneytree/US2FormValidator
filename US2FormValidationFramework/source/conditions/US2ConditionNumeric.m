@@ -32,13 +32,13 @@
 - (BOOL)check:(NSString *)string
 {
     if (nil == string)
+    {
         return NO;
+    }
     
-    NSError *error             = NULL;
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"[0-9]" options:0 error:&error];
-    NSUInteger numberOfMatches = [regex numberOfMatchesInString:string options:0 range:NSMakeRange(0, string.length)];
+    self.regexString = @"\\d+";
     
-    return numberOfMatches == string.length;
+    return [super check:string];
 }
 
 
@@ -52,19 +52,9 @@
 
 #pragma mark - Localization
 
-- (NSString *)localizedViolationString
+- (NSString *) createLocalizedViolationString
 {
-    NSString *key = @"US2KeyConditionViolationNumeric";
-    
-    NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Localization.bundle"];
-    NSBundle *bundle = [NSBundle bundleWithPath:path];
-    
-    if (bundle)
-    {
-        return [bundle localizedStringForKey:key value:key table:nil];
-    }
-    
-    return nil;
+    return US2LocalizedString(@"US2KeyConditionViolationNumeric", nil);
 }
 
 

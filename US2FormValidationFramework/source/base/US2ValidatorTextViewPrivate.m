@@ -85,7 +85,7 @@
     _didEndEditing = YES;
     
     // Try to validate the text field after focus loss
-    [self textViewDidChange:nil];
+    [self textViewDidChange:textView];
     
     if ([_delegate respondsToSelector:@selector(textViewDidEndEditing:)])
         [_delegate textViewDidEndEditing:_validatorTextView];

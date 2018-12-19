@@ -62,4 +62,11 @@
 @property (nonatomic, assign) US2ValidatorTextField *validatorTextField;
 
 
+/**
+ Selector for notification handler. Added to header to prevent Xcode warning
+ for undefined selector.
+ See `-US2ValidatorTextField _startUp`.
+ */
+- (void)textFieldDidChange:(NSNotification *)notification;
+
 @end
